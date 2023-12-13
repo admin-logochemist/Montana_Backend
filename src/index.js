@@ -1,9 +1,9 @@
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+app.use(express.json())
 // Define routes
-app.get('/', (req, res) => {
+app.get('/home', (req, res) => {
   res.send('Hello, World!');
 });
 
