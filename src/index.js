@@ -4,8 +4,9 @@ const app = express();
 const path = require("path");
 const PORT = process.env.PORT || 3000;
 const ftp = require("basic-ftp");
-
+const cors = require("cors");
 app.use(express.json());
+app.use(cors());
 // Define routes
 app.get("/", (req, res) => {
   res.send(`Hello, World!last deployed on ${new Date().toLocaleDateString()}`);
@@ -30,14 +31,14 @@ app.get("/check", async (req, res) => {
   res.send("Hello, World!");
 });
 // Route 2: About
-app.get("/api/items", async (req, res) => {
+app.get("/api/items/:id", async (req, res) => {
   let response;
   const payload = {
     Username: 99901,
     Password: "webuser1",
     POS: "I",
-    // Departments: id
-    Limit: 1,
+    Departments: req.params.id
+    // Limit: 1,
     // Offset: (currentPage - 1) * itemsPerPage
   };
   const apiEndpoint =
@@ -55,6 +56,10 @@ app.get("/api/items", async (req, res) => {
     .catch((error) => {
       // Handle errors
       console.error("Error:", error.message);
+      return res.status(500).send({
+        error: error,
+        message: "Error getting Items",
+      });
     });
   res.status(200).send({ mydata: response });
 });
@@ -64,7 +69,7 @@ app.get("/contact", (req, res) => {
   res.send("Contact us at contact@example.com.");
 });
 
-app.get("/items", async (req, res) => {
+app.get("/items/:id", async (req, res) => {
   try {
     const response = await axios.post(
       "https://test.rsrgroup.com/api/rsrbridge/1.0/pos/get-items",
