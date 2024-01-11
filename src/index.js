@@ -8,7 +8,7 @@ const ftp = require("basic-ftp");
 app.use(express.json());
 // Define routes
 app.get("/", (req, res) => {
-  res.send(`Hello, World! deployed on ${new Date().toLocaleDateString()}`);
+  res.send(`Hello, World!last deployed on ${new Date().toLocaleDateString()}`);
 });
 // Route 2: About
 app.get("/about", (req, res) => {
