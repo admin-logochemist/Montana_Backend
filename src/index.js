@@ -31,16 +31,19 @@ app.get("/check", async (req, res) => {
   res.send("Hello, World!");
 });
 // Route 2: About
-app.get("/api/items/:id", async (req, res) => {
+app.post("/api/items/:id", async (req, res) => {
   let response;
   const payload = {
     Username: 99901,
     Password: "webuser1",
     POS: "I",
-    Departments: req.params.id
+    Departments: req.params.id,
     // Limit: 1,
     // Offset: (currentPage - 1) * itemsPerPage
   };
+  if (req.body.limit) {
+    payload.limit = req.body.limit;
+  }
   const apiEndpoint =
     "https://test.rsrgroup.com/api/rsrbridge/1.0/pos/get-items";
 
@@ -78,7 +81,7 @@ app.get("/items/:id", async (req, res) => {
         Password: "webuser1",
         POS: "I",
         SortBy: "available-quantity",
-        Departments:req.params.id
+        Departments: req.params.id,
       }
     );
     console.log("response =>", response);
