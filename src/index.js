@@ -97,6 +97,30 @@ app.get("/items/:id", async (req, res) => {
     });
   }
 });
+
+app.get("/item/:id", async (req,res)=>{
+  try {
+    const response = await axios.post("https://test.rsrgroup.com/api/rsrbridge/1.0/pos/check-catalog",
+    {
+      Username: 99901,
+      Password: "webuser1",
+      POS: "I",
+      UPCcode: req.params.id
+    })
+    console.log("response", response);
+    return res.status(200).send({
+      success: true,
+      message: "Got All Items",
+      data: response.data
+    })
+    
+  } catch (error) {
+    return res.status(500).send({
+      error: error,
+      message: "Error while geting categories."
+    })
+  }
+})
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
