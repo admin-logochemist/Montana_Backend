@@ -98,7 +98,7 @@ app.get("/items/:id", async (req, res) => {
   }
 });
 
-app.get("/item/:id", async (req,res)=>{
+app.get("/api/item/:id", async (req,res)=>{
   try {
     const response = await axios.post("https://test.rsrgroup.com/api/rsrbridge/1.0/pos/check-catalog",
     {
