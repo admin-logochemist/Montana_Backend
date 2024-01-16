@@ -121,6 +121,31 @@ app.get("/api/item/:id", async (req,res)=>{
     })
   }
 })
+// attrubutes
+app.post("/api/item/attributes", async (req,res)=>{
+  try {
+    const response = await axios.post("https://test.rsrgroup.com/api/rsrbridge/1.0/pos/get-item-attributes",
+    {
+      Username: 99901,
+      Password: "webuser1",
+      POS: "I",
+      PartNum: req.body.PartNum,
+      UPCcode: req.body.UPCcode
+    })
+    console.log("response", response);
+    return res.status(200).send({
+      success: true,
+      message: "Got All Item Attributes",
+      data: response.data
+    })
+    
+  } catch (error) {
+    return res.status(500).send({
+      error: error,
+      message: "Error while geting categories."
+    })
+  }
+})
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
