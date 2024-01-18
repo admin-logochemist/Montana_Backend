@@ -2,9 +2,11 @@ const { default: axios } = require("axios");
 const express = require("express");
 const app = express();
 const path = require("path");
+const db = require("./db")
 const PORT = process.env.PORT || 3000;
 const ftp = require("basic-ftp");
 const cors = require("cors");
+const  router  = require("./routes");
 app.use(express.json());
 app.use(cors());
 // Define routes
@@ -66,12 +68,11 @@ app.post("/api/items/:id", async (req, res) => {
     });
   res.status(200).send({ mydata: response });
 });
-
 // Route 3: Contact
 app.get("/contact", (req, res) => {
   res.send("Contact us at contact@example.com.");
 });
-
+// department wise items
 app.get("/items/:id", async (req, res) => {
   try {
     const response = await axios.post(
@@ -97,7 +98,7 @@ app.get("/items/:id", async (req, res) => {
     });
   }
 });
-
+// catalog
 app.get("/api/item/:id", async (req,res)=>{
   try {
     const response = await axios.post("https://test.rsrgroup.com/api/rsrbridge/1.0/pos/check-catalog",
@@ -146,8 +147,15 @@ app.post("/api/item/attributes", async (req,res)=>{
     })
   }
 })
+
+app.use("/api", router)
+// app.use('/api', routes)
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+db.ConnectDB().then(()=>{
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+}).catch((error)=>{
+  console.log(error)
+})
 module.exports = app;
