@@ -1,3 +1,4 @@
 module.exports = {
-    UserModel: require("./user")
+    UserModel: require("./user"),
+    ContactModel: require("./contact")
 };
