@@ -3,16 +3,15 @@ const db = require('../models');
 const contactUs = async (req,res)=>{
     
     try {
-        const {name,email,message}= req.body;
-        if([name,email,message].some((field)=> field?.trim() === "")){
+        const {name,email,phone,message} = req.body;
+        if([name,email,phone,message].some((field)=> field?.trim() === "")){
             return res.status(400).json({
                 success:true,
                 message: "All fields must be required"
             })
         }
-
         const contact = await db.ContactModel.create({
-            name,email,message
+            name,email,phone,message
         })
 
         if(contact){
@@ -21,7 +20,6 @@ const contactUs = async (req,res)=>{
                 message: "Submitted Successfull"
             })
         }
-
     } catch (error) {
         return res.status(500).json({
             success: false,

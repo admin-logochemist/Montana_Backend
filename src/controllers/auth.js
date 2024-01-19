@@ -67,7 +67,7 @@ const login = async (req, res) => {
        return res.status(200).json({
            success:true,
            token,
-        user,
+        data : user,
         message: "Login Successfull"
 
        })
