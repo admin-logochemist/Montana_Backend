@@ -147,8 +147,7 @@ app.post("/api/item/attributes", async (req,res)=>{
     })
   }
 })
-
-app.use("/api", router)
+app.use("/api", router);
 // app.use('/api', routes)
 // Start the server
 db.ConnectDB().then(()=>{
