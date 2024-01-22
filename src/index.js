@@ -7,6 +7,9 @@ const PORT = process.env.PORT || 3000;
 const ftp = require("basic-ftp");
 const cors = require("cors");
 const  router  = require("./routes");
+
+const authController = require('./controllers/auth')
+
 app.use(express.json());
 app.use(cors());
 // Define routes
@@ -147,7 +150,12 @@ app.post("/api/item/attributes", async (req,res)=>{
     })
   }
 })
+
+
 app.use("/api", router);
+
+app.post("/api/signup", authController.signup);
+
 // app.use('/api', routes)
 // Start the server
 db.ConnectDB().then(()=>{
