@@ -176,10 +176,11 @@ app.post("/api/signup", async (req, res) => {
       await newUser.save();
 
       // Generate JWT token
-      const token = await jwt.sign({ userId: newUser._id }, process.env.SECRET_KEY, {
-          expiresIn: '1h',
-      });
-
+      // const token = await jwt.sign({ userId: newUser._id }, process.env.SECRET_KEY, {
+      //     expiresIn: '1h',
+      // });
+      const token = "asdadasd"
+      console.log("secretkey-->", process.env.SECRET_KEY);
     return  res.status(200).json({
           success: true,  
           token,
@@ -195,6 +196,21 @@ app.post("/api/signup", async (req, res) => {
       })
   }
 });
+app.get("/api/getusers", async(req,res)=>{
+  try {
+    const users = await dbModel.UserModel.find();
+    return res.status(200).json({
+      data: users
+    })
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      message: "Error while registering the user"
+  })
+  }
+})
 
 // app.use('/api', routes)
 // Start the server
