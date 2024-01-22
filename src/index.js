@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors());
 // Define routes
 app.get("/", (req, res) => {
-  res.send(`Hello, World!last deployed on ${new Date().toLocaleDateString()}`);
+  res.send(`Hello Updated, World!last deployed on ${new Date().toLocaleDateString()}`);
 });
 // Route 2: About
 app.get("/about", (req, res) => {
