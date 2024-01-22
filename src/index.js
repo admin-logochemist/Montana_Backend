@@ -7,6 +7,9 @@ const PORT = process.env.PORT || 3000;
 const ftp = require("basic-ftp");
 const cors = require("cors");
 const  router  = require("./routes");
+const dbModel = require("./models")
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 
 const authController = require('./controllers/auth')
 
@@ -154,7 +157,44 @@ app.post("/api/item/attributes", async (req,res)=>{
 
 app.use("/api", router);
 
-app.post("/api/signup", authController.signup);
+app.post("/api/signup", async (req, res) => {
+  try {
+      const {
+          firstName, secondName, email, password
+      } = req.body;
+      // Check if the user already exists
+      const existingUser = await dbModel.UserModel.findOne({ email });
+      if (existingUser) {
+          return res.status(400).json({ message: 'Email already exists' });
+      }
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Create a new user
+      const newUser = new dbModel.UserModel({ firstName, secondName, email, password: hashedPassword });
+      await newUser.save();
+
+      // Generate JWT token
+      const token = await jwt.sign({ userId: newUser._id }, process.env.SECRET_KEY, {
+          expiresIn: '1h',
+      });
+
+    return  res.status(200).json({
+          success: true,  
+          token,
+          data: { firstName, secondName, email },
+          message: 'User registered successfully'
+      });
+
+  } catch (error) {
+      return res.status(500).json({
+          success: false,
+          error: error.message,
+          message: "Error while registering the user"
+      })
+  }
+});
 
 // app.use('/api', routes)
 // Start the server
