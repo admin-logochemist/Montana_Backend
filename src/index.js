@@ -6,7 +6,7 @@ const db = require("./db")
 const PORT = process.env.PORT || 3000;
 const ftp = require("basic-ftp");
 const cors = require("cors");
-const  router  = require("./routes");
+const router = require("./routes");
 const dbModel = require("./models")
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
@@ -81,6 +81,7 @@ app.get("/contact", (req, res) => {
 // department wise items
 app.get("/items/:id", async (req, res) => {
   try {
+    // get items from test apis
     const response = await axios.post(
       "https://test.rsrgroup.com/api/rsrbridge/1.0/pos/get-items",
       {
@@ -105,22 +106,22 @@ app.get("/items/:id", async (req, res) => {
   }
 });
 // catalog
-app.get("/api/item/:id", async (req,res)=>{
+app.get("/api/item/:id", async (req, res) => {
   try {
     const response = await axios.post("https://test.rsrgroup.com/api/rsrbridge/1.0/pos/check-catalog",
-    {
-      Username: 99901,
-      Password: "webuser1",
-      POS: "I",
-      UPCcode: req.params.id
-    })
+      {
+        Username: 99901,
+        Password: "webuser1",
+        POS: "I",
+        UPCcode: req.params.id
+      })
     console.log("response", response);
     return res.status(200).send({
       success: true,
       message: "Got All Items",
       data: response.data
     })
-    
+
   } catch (error) {
     return res.status(500).send({
       error: error,
@@ -129,23 +130,23 @@ app.get("/api/item/:id", async (req,res)=>{
   }
 })
 // attrubutes
-app.post("/api/item/attributes", async (req,res)=>{
+app.get("/api/item/attributes/:id", async (req, res) => {
   try {
     const response = await axios.post("https://test.rsrgroup.com/api/rsrbridge/1.0/pos/get-item-attributes",
-    {
-      Username: 99901,
-      Password: "webuser1",
-      POS: "I",
-      PartNum: req.body.PartNum,
-      UPCcode: req.body.UPCcode
-    })
-    console.log("response", response);
+      {
+        Username: 99901,
+        Password: "webuser1",
+        POS: "I", 
+        UPCcode: req.params.id
+      })
+      // UPCcode: req.body.UPCcode
+      console.log("response", response);
     return res.status(200).send({
       success: true,
       message: "Got All Item Attributes",
-      data: response.data
+      data: response?.data?.Attributes
     })
-    
+
   } catch (error) {
     return res.status(500).send({
       error: error,
@@ -159,44 +160,44 @@ app.use("/api", router);
 
 app.post("/api/signup", async (req, res) => {
   try {
-      const {
-          firstName, secondName, email, password
-      } = req.body;
-      // Check if the user already exists
-      const existingUser = await dbModel.UserModel.findOne({ email });
-      if (existingUser) {
-          return res.status(400).json({ message: 'Email already exists' });
-      }
+    const {
+      firstName, secondName, email, password
+    } = req.body;
+    // Check if the user already exists
+    const existingUser = await dbModel.UserModel.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
 
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Create a new user
-      const newUser = new dbModel.UserModel({ firstName, secondName, email, password: hashedPassword });
-      await newUser.save();
+    // Create a new user
+    const newUser = new dbModel.UserModel({ firstName, secondName, email, password: hashedPassword });
+    await newUser.save();
 
-      // Generate JWT token
-      // const token = await jwt.sign({ userId: newUser._id }, process.env.SECRET_KEY, {
-      //     expiresIn: '1h',
-      // });
-      const token = "asdadasd"
-      console.log("secretkey-->", process.env.SECRET_KEY);
-    return  res.status(200).json({
-          success: true,  
-          token,
-          data: { firstName, secondName, email },
-          message: 'User registered successfully'
-      });
+    // Generate JWT token
+    // const token = await jwt.sign({ userId: newUser._id }, process.env.SECRET_KEY, {
+    //     expiresIn: '1h',
+    // });
+    const token = "asdadasd"
+    console.log("secretkey-->", process.env.SECRET_KEY);
+    return res.status(200).json({
+      success: true,
+      token,
+      data: { firstName, secondName, email },
+      message: 'User registered successfully'
+    });
 
   } catch (error) {
-      return res.status(500).json({
-          success: false,
-          error: error.message,
-          message: "Error while registering the user"
-      })
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      message: "Error while registering the user"
+    })
   }
 });
-app.get("/api/getusers", async(req,res)=>{
+app.get("/api/getusers", async (req, res) => {
   try {
     const users = await dbModel.UserModel.find();
     return res.status(200).json({
@@ -208,17 +209,17 @@ app.get("/api/getusers", async(req,res)=>{
       success: false,
       error: error.message,
       message: "Error while registering the user"
-  })
+    })
   }
 })
 
 // app.use('/api', routes)
 // Start the server
-db.ConnectDB().then(()=>{
+db.ConnectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });
-}).catch((error)=>{
+}).catch((error) => {
   console.log(error)
 })
 module.exports = app;
