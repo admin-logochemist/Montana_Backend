@@ -89,6 +89,7 @@ app.get("/items/:id", async (req, res) => {
         Password: "webuser1",
         POS: "I",
         SortBy: "available-quantity",
+        WithAttributes: true,
         Departments: req.params.id,
       }
     );
