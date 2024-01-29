@@ -45,7 +45,7 @@ app.post("/api/items/:id", async (req, res) => {
     Username: 99901,
     Password: "webuser1",
     POS: "I",
-    Limit: "3500",
+    Limit: "3000",
     WithAttributes: true,
     Departments: req.params.id
     // Offset: (currentPage - 1) * itemsPerPage
@@ -73,7 +73,7 @@ app.post("/api/items/:id", async (req, res) => {
         message: "Error getting Items",
       });
     });
-  res.status(200).send({ mydata: response });
+  res.status(200).send({ Length: response.length , mydata: response  });
 });
 // Route 3: Contact
 app.get("/contact", (req, res) => {
