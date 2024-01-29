@@ -45,7 +45,7 @@ app.post("/api/items/:id", async (req, res) => {
     Username: 99901,
     Password: "webuser1",
     POS: "I",
-    Limit: 3500,
+    Limit: "3500",
     WithAttributes: true,
     Departments: req.params.id
     // Offset: (currentPage - 1) * itemsPerPage
