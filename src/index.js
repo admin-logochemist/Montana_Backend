@@ -51,7 +51,7 @@ app.post("/api/items/:id", async (req, res) => {
     // Offset: (currentPage - 1) * itemsPerPage
   };
   if (req.body.limit) {
-    payload.limit = req.body.limit;
+    payload.Limit = req.body.limit;
   }
   const apiEndpoint =
     "https://test.rsrgroup.com/api/rsrbridge/1.0/pos/get-items";
