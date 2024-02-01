@@ -10,11 +10,68 @@ const router = require("./routes");
 const dbModel = require("./models")
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
-
+const nodemailer = require('nodemailer')
 const authController = require('./controllers/auth')
 
 app.use(express.json());
 app.use(cors());
+
+let transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "muhammadumar10293847@gmail.com",
+    pass: "ulhy snda kkkt gvzz",
+  },
+});
+// send mail api
+app.post("/sendMail", async (req,res)=>{
+  try {
+    let {name , email} = req.body;
+    let info = await transporter.sendMail({
+      from: "muhammadumar10293847@gmail.com",
+      to: email,
+      subject: "Senior Residence Registration",
+      html: `  <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+      <tr>
+          <td bgcolor="#4B266A" style="padding: 20px; text-align: center;">
+              <img with="120" src="https://firebasestorage.googleapis.com/v0/b/landingpages-d5920.appspot.com/o/images%2Flogo.png?alt=media&token=9a446a17-8fb2-462e-87c2-1ea875eda322" alt="Your Brand Logo" style="max-width: 150px; height: auto;">
+              <h2 style="color: #ffffff;">User Registration Confirmation</h2>
+              <p style="color: #ffffff;">Thank you for registering! Your account has been successfully created.</p>
+          </td>
+      </tr>
+      <tr>
+          <td bgcolor="#ffffff" style="padding: 20px;">
+              <table cellpadding="10" cellspacing="0" width="100%" style="border-collapse: collapse; border: 1px solid #dddddd;">
+                  <tr>
+                      <td><strong style="color: #4B266A;">Name:</strong></td>
+                      <td>${name}</td>
+                  </tr>
+                  <tr>
+                      <td><strong style="color: #4B266A;">Email:</strong></td>
+                      <td>${email}</td>
+                  </tr>
+                  <!-- Add more user details as needed -->
+              </table>
+          </td>
+      </tr>
+      <tr>
+          <td bgcolor="#4B266A" style="padding: 20px; text-align: center;">
+              <p style="color: #ffffff;">Thank you for choosing our platform!</p>
+          </td>
+      </tr>
+  </table>`,
+    });
+  
+    res.status(200).json({ info });
+  } catch (error) {
+    return res.status(500).send({
+      error: error,
+      message: "Error while sending mail",
+    });
+  }
+})
 // Define routes
 app.get("/", (req, res) => {
   res.send(`Hello Updated Again, World!last deployed on ${new Date().toLocaleDateString()}`);
