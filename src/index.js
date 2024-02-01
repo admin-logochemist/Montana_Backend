@@ -21,8 +21,8 @@ let transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "muhammadumar10293847@gmail.com",
-    pass: "ulhy snda kkkt gvzz",
+    user: "developer@seniorresidencemap.com",
+    pass: "xtap wkcy bihr zmqx",
   },
 });
 // send mail api
