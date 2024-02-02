@@ -26,9 +26,9 @@ let transporter = nodemailer.createTransport({
   },
 });
 // send mail api
-app.post("/sendMail", async (req,res)=>{
+app.post("/sendMail", async (req, res) => {
   try {
-    let {name , email} = req.body;
+    let { name, email } = req.body;
     let info = await transporter.sendMail({
       from: "muhammadumar10293847@gmail.com",
       to: email,
@@ -63,7 +63,7 @@ app.post("/sendMail", async (req,res)=>{
       </tr>
   </table>`,
     });
-  
+
     res.status(200).json({ info });
   } catch (error) {
     return res.status(500).send({
@@ -72,6 +72,51 @@ app.post("/sendMail", async (req,res)=>{
     });
   }
 })
+// send mail api
+app.post("/sendInvite", async (req, res) => {
+  try {
+    let { name, email } = req.body;
+    let info = await transporter.sendMail({
+      from: "muhammadumar10293847@gmail.com",
+      to: email,
+      subject: "Senior Residence Registration",
+      html: `<table cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+      <tr>
+          <td bgcolor="#4B266A" style="padding: 20px; text-align: center; color: #ffffff;">
+              <!-- Include your app logo here -->
+              <img src="https://firebasestorage.googleapis.com/v0/b/landingpages-d5920.appspot.com/o/images%2Flogo.png?alt=media&token=9a446a17-8fb2-462e-87c2-1ea875eda322" alt="Your App Logo" width="100" height="auto" style="display: block; margin: 0 auto;">
+              <h2>You're Invited to Join Senior Residence Map</h2>
+              <p>Join Senior Residence Map and experience a new level of features/benefits!</p>
+          </td>
+      </tr>
+      <tr>
+          <td bgcolor="#ffffff" style="padding: 20px;">
+              <p>You've been invited by <b>${name}</b> to join <b>Senior Residence Map</b> App. To get started, follow these simple steps:</p>
+              <ul>
+                  <li>Download the app from the App Store or Google Play Store.</li>
+                  <li>Sign up with your email address and create a secure password.</li>
+                  <!-- Add any additional steps or information as needed -->
+              </ul>
+          </td>
+      </tr>
+      <tr>
+          <td bgcolor="#4B266A" style="padding: 20px; text-align: center; color: #ffffff;">
+              <p>Ready to join the community?</p>
+              <a href="#" style="color: #ffffff; text-decoration: none; font-weight: bold;">Download the App</a>
+          </td>
+      </tr>
+  </table>`,
+    });
+
+    res.status(200).json({ info });
+  } catch (error) {
+    return res.status(500).send({
+      error: error,
+      message: "Error while sending Invite",
+    });
+  }
+})
+
 // Define routes
 app.get("/", (req, res) => {
   res.send(`Hello Updated Again, World!last deployed on ${new Date().toLocaleDateString()}`);
@@ -130,7 +175,7 @@ app.post("/api/items/:id", async (req, res) => {
         message: "Error getting Items",
       });
     });
-  res.status(200).send({ Length: response.length , mydata: response  });
+  res.status(200).send({ Length: response.length, mydata: response });
 });
 // Route 3: Contact
 app.get("/contact", (req, res) => {
@@ -195,11 +240,11 @@ app.get("/api/item/attributes/:id", async (req, res) => {
       {
         Username: 99901,
         Password: "webuser1",
-        POS: "I", 
+        POS: "I",
         UPCcode: req.params.id
       })
-      // UPCcode: req.body.UPCcode
-      console.log("response", response);
+    // UPCcode: req.body.UPCcode
+    console.log("response", response);
     return res.status(200).send({
       success: true,
       message: "Got All Item Attributes",
