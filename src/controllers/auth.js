@@ -143,7 +143,7 @@ const demoSignup = async (req, res) => {
         // Check if the user already exists
         const existingUser = await db.DemoUserModel.findOne({ email });
         if (existingUser) {
-            return res.status(200).json({status:false, message: 'Email already exists' ,  type: "email" });
+            return res.status(200).json({success:false, message: 'Email already exists' ,  type: "email" });
         }
 
         // Hash the password
