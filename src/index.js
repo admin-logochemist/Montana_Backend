@@ -107,7 +107,6 @@ app.post("/sendInvite", async (req, res) => {
       </tr>
   </table>`,
     });
-
     res.status(200).json({ info });
   } catch (error) {
     return res.status(500).send({

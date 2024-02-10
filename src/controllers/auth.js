@@ -2,6 +2,8 @@ const db = require("../models")
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
+const saltRounds = 10;
+const { sendMail } = require("../helpers/mailer");
 
 const signup = async (req, res) => {
     try {
@@ -20,12 +22,14 @@ const signup = async (req, res) => {
         // Create a new user
         const newUser = new db.UserModel({ firstName, secondName, email, password: hashedPassword });
         await newUser.save();
-
+        
         // Generate JWT token
         const token = await jwt.sign({ userId: newUser._id }, process.env.SECRET_KEY, {
             expiresIn: '1h',
         });
+        
 
+        
         return res.status(200).json({
             success: true,
             token,
@@ -208,6 +212,84 @@ const demoSignup = async (req, res) => {
     }
 }
 
+// Generate random OTP
+function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+  
+const sendOtp = async (req, res) => {
+    try {
+      const userEmail = req.body.email;
+      const user = await db.UserModel.findOne({ email: userEmail });
+  
+      if (!user) {
+        return res.status(404).json({success: false, message: "User not registered with this email" });
+      }
+  
+      const otpCode = generateOTP();
+      console.log("otpCode-->", otpCode);
+  
+      await sendMail(user.email, "OTP Code",  `Your OTP code is: ${otpCode}`)
+  
+      user.otp = {
+        type: "forgetPassword",
+        value: otpCode,
+        isVerified: false,
+      };
+  
+      await user.save();
+  
+      res.status(200).json({ success: true, message: "OTP sent successfully" });
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      res.status(500).json({ success:false, message:error.message , error: "Internal server error" });
+    }
+  };
+  
+  const varifyOtp = async (req,res) => {
+    try {
+      const userEmail = req.body.email;
+      const userOtp = req.body.otp;
+      const user = await db.UserModel.findOne({ email: userEmail });
+      if (!user) {
+        return res.status(404).json({success: false, message: "User not registered with this email" });
+      }
+  
+      if (user.otp.value == userOtp) {
+        user.otp.isVerified = true;
+        await user.save();
+        res.status(200).json({ success: true, message: "OTP verified successfully" });
+      } 
+      else {
+        res.status(400).json({success: false, message: "Invalid OTP" });
+      }
+  
+    } catch (error) {
+      console.log("Error while verifying OTP:", error);
+      res.status(500).json({ success:false, message:error.message , error: "Internal server error"})
+    }
+  }
+  
+  const changePassword = async (req,res) =>{
+    try {
+      const userEmail = req.body.email;
+      const userNewPassword = req.body.password;
+      const user = await db.UserModel.findOne({ email: userEmail });
+      if (!user) {
+        return res.status(404).json({success: false, message: "User not registered with this email" });
+      }
+      const hashedPassword = await bcrypt.hash(userNewPassword, saltRounds);
+      user.password = hashedPassword;
+      await user.save();
+      res.status(200).json({ success: true, message: "Password changed successfully" });
+  
+    } catch (error) {
+      console.log("Error while changing Password:", error);
+      res.status(500).json({ success:false, message:error.message , error: "Internal server error"})
+    }
+  }
+
+
 module.exports = {
-    signup, login, demoSignup, demoLogin
+    signup, login, demoSignup, demoLogin, sendOtp, varifyOtp, changePassword
 }
