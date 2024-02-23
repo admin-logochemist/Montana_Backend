@@ -26,95 +26,95 @@ let transporter = nodemailer.createTransport({
   },
 });
 // send mail api
-app.post("/sendMail", async (req, res) => {
-  try {
-    let { name, email } = req.body;
-    let info = await transporter.sendMail({
-      from: "muhammadumar10293847@gmail.com",
-      to: email,
-      subject: "Senior Residence Registration",
-      html: `  <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
-      <tr>
-          <td bgcolor="#4B266A" style="padding: 20px; text-align: center;">
-              <img with="120" src="https://firebasestorage.googleapis.com/v0/b/landingpages-d5920.appspot.com/o/images%2Flogo.png?alt=media&token=9a446a17-8fb2-462e-87c2-1ea875eda322" alt="Your Brand Logo" style="max-width: 150px; height: auto;">
-              <h2 style="color: #ffffff;">User Registration Confirmation</h2>
-              <p style="color: #ffffff;">Thank you for registering! Your account has been successfully created.</p>
-          </td>
-      </tr>
-      <tr>
-          <td bgcolor="#ffffff" style="padding: 20px;">
-              <table cellpadding="10" cellspacing="0" width="100%" style="border-collapse: collapse; border: 1px solid #dddddd;">
-                  <tr>
-                      <td><strong style="color: #4B266A;">Name:</strong></td>
-                      <td>${name}</td>
-                  </tr>
-                  <tr>
-                      <td><strong style="color: #4B266A;">Email:</strong></td>
-                      <td>${email}</td>
-                  </tr>
-                  <!-- Add more user details as needed -->
-              </table>
-          </td>
-      </tr>
-      <tr>
-          <td bgcolor="#4B266A" style="padding: 20px; text-align: center;">
-              <p style="color: #ffffff;">Thank you for choosing our platform!</p>
-          </td>
-      </tr>
-  </table>`,
-    });
+// app.post("/sendMail", async (req, res) => {
+//   try {
+//     let { name, email } = req.body;
+//     let info = await transporter.sendMail({
+//       from: "muhammadumar10293847@gmail.com",
+//       to: email,
+//       subject: "Senior Residence Registration",
+//       html: `  <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+//       <tr>
+//           <td bgcolor="#4B266A" style="padding: 20px; text-align: center;">
+//               <img with="120" src="https://firebasestorage.googleapis.com/v0/b/landingpages-d5920.appspot.com/o/images%2Flogo.png?alt=media&token=9a446a17-8fb2-462e-87c2-1ea875eda322" alt="Your Brand Logo" style="max-width: 150px; height: auto;">
+//               <h2 style="color: #ffffff;">User Registration Confirmation</h2>
+//               <p style="color: #ffffff;">Thank you for registering! Your account has been successfully created.</p>
+//           </td>
+//       </tr>
+//       <tr>
+//           <td bgcolor="#ffffff" style="padding: 20px;">
+//               <table cellpadding="10" cellspacing="0" width="100%" style="border-collapse: collapse; border: 1px solid #dddddd;">
+//                   <tr>
+//                       <td><strong style="color: #4B266A;">Name:</strong></td>
+//                       <td>${name}</td>
+//                   </tr>
+//                   <tr>
+//                       <td><strong style="color: #4B266A;">Email:</strong></td>
+//                       <td>${email}</td>
+//                   </tr>
+//                   <!-- Add more user details as needed -->
+//               </table>
+//           </td>
+//       </tr>
+//       <tr>
+//           <td bgcolor="#4B266A" style="padding: 20px; text-align: center;">
+//               <p style="color: #ffffff;">Thank you for choosing our platform!</p>
+//           </td>
+//       </tr>
+//   </table>`,
+//     });
 
-    res.status(200).json({ info });
-  } catch (error) {
-    return res.status(500).send({
-      error: error,
-      message: "Error while sending mail",
-    });
-  }
-})
+//     res.status(200).json({ info });
+//   } catch (error) {
+//     return res.status(500).send({
+//       error: error,
+//       message: "Error while sending mail",
+//     });
+//   }
+// })
 // send mail api
-app.post("/sendInvite", async (req, res) => {
-  try {
-    let { name, email } = req.body;
-    let info = await transporter.sendMail({
-      from: "muhammadumar10293847@gmail.com",
-      to: email,
-      subject: "Senior Residence Registration",
-      html: `<table cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
-      <tr>
-          <td bgcolor="#4B266A" style="padding: 20px; text-align: center; color: #ffffff;">
-              <!-- Include your app logo here -->
-              <img src="https://firebasestorage.googleapis.com/v0/b/landingpages-d5920.appspot.com/o/images%2Flogo.png?alt=media&token=9a446a17-8fb2-462e-87c2-1ea875eda322" alt="Your App Logo" width="100" height="auto" style="display: block; margin: 0 auto;">
-              <h2>You're Invited to Join Senior Residence Map</h2>
-              <p>Join Senior Residence Map and experience a new level of features/benefits!</p>
-          </td>
-      </tr>
-      <tr>
-          <td bgcolor="#ffffff" style="padding: 20px;">
-              <p>You've been invited by <b>${name}</b> to join <b>Senior Residence Map</b> App. To get started, follow these simple steps:</p>
-              <ul>
-                  <li>Download the app from the App Store or Google Play Store.</li>
-                  <li>Sign up with your email address and create a secure password.</li>
-                  <!-- Add any additional steps or information as needed -->
-              </ul>
-          </td>
-      </tr>
-      <tr>
-          <td bgcolor="#4B266A" style="padding: 20px; text-align: center; color: #ffffff;">
-              <p>Ready to join the community?</p>
-              <a href="#" style="color: #ffffff; text-decoration: none; font-weight: bold;">Download the App</a>
-          </td>
-      </tr>
-  </table>`,
-    });
-    res.status(200).json({ info });
-  } catch (error) {
-    return res.status(500).send({
-      error: error,
-      message: "Error while sending Invite",
-    });
-  }
-})
+// app.post("/sendInvite", async (req, res) => {
+//   try {
+//     let { name, email } = req.body;
+//     let info = await transporter.sendMail({
+//       from: "muhammadumar10293847@gmail.com",
+//       to: email,
+//       subject: "Senior Residence Registration",
+//       html: `<table cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+//       <tr>
+//           <td bgcolor="#4B266A" style="padding: 20px; text-align: center; color: #ffffff;">
+//               <!-- Include your app logo here -->
+//               <img src="https://firebasestorage.googleapis.com/v0/b/landingpages-d5920.appspot.com/o/images%2Flogo.png?alt=media&token=9a446a17-8fb2-462e-87c2-1ea875eda322" alt="Your App Logo" width="100" height="auto" style="display: block; margin: 0 auto;">
+//               <h2>You're Invited to Join Senior Residence Map</h2>
+//               <p>Join Senior Residence Map and experience a new level of features/benefits!</p>
+//           </td>
+//       </tr>
+//       <tr>
+//           <td bgcolor="#ffffff" style="padding: 20px;">
+//               <p>You've been invited by <b>${name}</b> to join <b>Senior Residence Map</b> App. To get started, follow these simple steps:</p>
+//               <ul>
+//                   <li>Download the app from the App Store or Google Play Store.</li>
+//                   <li>Sign up with your email address and create a secure password.</li>
+//                   <!-- Add any additional steps or information as needed -->
+//               </ul>
+//           </td>
+//       </tr>
+//       <tr>
+//           <td bgcolor="#4B266A" style="padding: 20px; text-align: center; color: #ffffff;">
+//               <p>Ready to join the community?</p>
+//               <a href="#" style="color: #ffffff; text-decoration: none; font-weight: bold;">Download the App</a>
+//           </td>
+//       </tr>
+//   </table>`,
+//     });
+//     res.status(200).json({ info });
+//   } catch (error) {
+//     return res.status(500).send({
+//       error: error,
+//       message: "Error while sending Invite",
+//     });
+//   }
+// })
 
 // Define routes
 app.get("/", (req, res) => {
