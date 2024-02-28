@@ -1,0 +1,14 @@
+const mongoose = require('mongoose');
+
+const itemTypesCategorySchema = mongoose.Schema(
+    {
+        itemType : String
+    },
+    {
+        timestamps: true
+    }
+)
+
+const ItemTypesCategory = mongoose.model("itemtypeslipseys",itemTypesCategorySchema)
+
+module.exports = ItemTypesCategory;

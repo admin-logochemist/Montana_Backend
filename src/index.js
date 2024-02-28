@@ -11,10 +11,13 @@ const dbModel = require("./models")
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
-const authController = require('./controllers/auth')
+const authController = require('./controllers/auth');
+
 
 app.use(express.json());
 app.use(cors());
+
+
 
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",

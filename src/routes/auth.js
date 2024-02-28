@@ -10,5 +10,7 @@ router.post("/login", authController.login);
 router.post('/sendOtp', authController.sendOtp )
 router.post('/verifyOtp', authController.varifyOtp)
 router.post('/changePassword', authController.changePassword)
+// lipseys
+router.post('/lipseysLogin', authController.lipseysLogin)
 
 module.exports = router;

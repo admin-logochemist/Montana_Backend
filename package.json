@@ -23,6 +23,7 @@
     "express": "^4.18.2",
     "ftp": "^0.3.10",
     "jsonwebtoken": "^9.0.2",
+    "lipseys-api": "^1.2.2",
     "mongoose": "^8.1.0",
     "nodemailer": "^6.9.9",
     "nodemon": "^3.0.2"

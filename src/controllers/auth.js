@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const saltRounds = 10;
 const { sendMail } = require("../helpers/mailer");
+const lipseysApi = require("lipseys-api");
 
 const signup = async (req, res) => {
     try {
@@ -289,7 +290,18 @@ const sendOtp = async (req, res) => {
     }
   }
 
+const lipseysLogin = async (req,res)=>{
+    const {email , password} = req.body;
+    try {    
+        lipseysApi.Init(email,password,function (resp) {
+            console.log(res);
+            res.status(200).json({ success: true, message: "token generated", data : resp });
+          })
+    } catch (error) {
+        res.status(500).json({ success:false, message:error.message , error: "Internal server error"})
+    }
 
+}
 module.exports = {
-    signup, login, demoSignup, demoLogin, sendOtp, varifyOtp, changePassword
+    signup, lipseysLogin, login, demoSignup, demoLogin, sendOtp, varifyOtp, changePassword
 }
