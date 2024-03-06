@@ -81,46 +81,78 @@ const getFilterKeys = async (req, res) => {
 // http://localhost:3000/products?page=1&limit=20
 const getCatalogs = async (req, res) => {
 
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 20;
-  const type = req.query.type;
-  const value = req.query.value;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const type = req.query.type;
+    const value = req.query.value;
+    const searchValue = req?.query?.q;
+    const min = req?.query?.min;
+    const max = req?.query?.max;
 
-  const query = {};
+    const query = {};
 
-  // Add category filter if provided
-  if (type) {
-    query[type] = value;
-  }
+    // Add category filter if provided
+    if (type) {
+        query[type] = value;
+    }
+    if(searchValue){
+        query.description1 = {$regex: searchValue,  $options: 'i' } 
+    }
+    if(min && max){
+        query.msrp = {$gt: min, $lt:max}
+    }
 
-  try {
-    // Count total number of products matching the query
-    const totalCount = await db.CatalogFeedModel.countDocuments(query);
+    console.log("query --> ",query)
+    try {
+        // Count total number of products matching the query
+        let totalCount = await db.CatalogFeedModel.countDocuments(query);
 
-    // Fetch products for the specified page and limit
-    const products = await db.CatalogFeedModel.find(query)
-      .skip((page - 1) * limit)
-      .limit(limit);
+        // Fetch products for the specified page and limit
+        let products = await db.CatalogFeedModel.find(query)
+            .skip((page - 1) * limit)
+            .limit(limit);
 
-    res.status(200).json({
-      page,
-      limit,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      type,value,
-      currentCount: products.length,
-      products
-    });
+        //  if search Value
+        // if (searchValue) {
+        //  products = products.filter(item => item.description1.toLowerCase().includes(searchValue.toLowerCase()) || item.msrp >= +searchValue );
+        //  totalCount= products.length;
+        // }
+        res.status(200).json({
+            page,
+            limit,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            type, 
+            value,
+            currentCount: products.length,
+            products
+        });
 
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
+
+const getItem = async(req,res)=>{
+    try {
+        const id = req?.params?.id;
+        console.log("id-->",id)
+        const item = await db.CatalogFeedModel.findById(id)
+        console.log("item -->",item)
+        if(item){
+            res.status(200).json({success: true, message: "Item get Successful", data: item})
+        }        
+
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });    
+    }
+}
+
 // return array of unique menufacturers
-const getManufacturers = async (req,res)=>{
+const getManufacturers = async (req, res) => {
     try {
         const manufacturers = await db.CatalogFeedModel.distinct('manufacturer');
-        res.status(200).json({success:true, message:"Menufacturer fetch successful", data:manufacturers});
+        res.status(200).json({ success: true, message: "Menufacturer fetch successful", data: manufacturers });
 
     } catch (error) {
         console.error(error);
@@ -128,29 +160,43 @@ const getManufacturers = async (req,res)=>{
     }
 }
 // return array of unique families of particular menufacturer
-const getFamily = async (req,res)=>{
-    console.log("req-query-> ",req.query)
+const getFamily = async (req, res) => {
+    console.log("req-query-> ", req.query)
     try {
         const families = await db.CatalogFeedModel.distinct('family', req.query);
-        res.status(200).json({success:true, message:"Families fetch successful", data:families});
+        res.status(200).json({ success: true, message: "Families fetch successful", data: families });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }
-// return array of unique models of particular family
-const getModels = async (req,res)=>{
-    console.log("req-query-> ",req.query)
+// return array of unique models of particular family & manufacturer
+const getModels = async (req, res) => {
+    console.log("req-query-> ", req.query)
     try {
         const models = await db.CatalogFeedModel.distinct('model', req.query);
-        res.status(200).json({success:true, message:"Models fetch successful", data:models});
+        res.status(200).json({ success: true, message: "Models fetch successful", data: models });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+// return array of unique types of particular family & manufacturer & model
+const getTypes = async (req, res) => {
+    console.log("req-query-> ", req.query)
+    try {
+        const types = await db.CatalogFeedModel.distinct('type', req.query);
+        res.status(200).json({ success: true, message: "Types fetch successful", data: types });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+
 
 
 module.exports = {
-    lipseysCatalog, getFilterKeys, getCatalogs, getManufacturers, getFamily,getModels
+    lipseysCatalog, getFilterKeys, getCatalogs, getManufacturers, getFamily, getModels, getTypes, getItem
 }
