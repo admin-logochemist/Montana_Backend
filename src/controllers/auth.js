@@ -302,6 +302,38 @@ const lipseysLogin = async (req,res)=>{
     }
 
 }
+const getUser = async (req,res)=>{
+    try {
+        const id = req.params.id;
+
+        const user = await db.UserModel.findById(id);
+
+        if(!user){
+            res.status(404).json({success: false, message:"Not found"})
+        }else{
+            res.status(200).json({success:true, message:"User get successfull", data: user})
+        }
+
+    } catch (error) {
+        res.status(500).json({ success:false, message:error.message , error: "Internal server error"})
+    }
+}
+const editUser = async (req,res)=>{
+    try {
+        const userId = req.params.id;
+        const updatedUserData = req.body;
+
+        const user = await db.UserModel.findByIdAndUpdate(userId, updatedUserData, { new: true });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.status(200).json({success:true,message:"Update Successful", data:user});
+    } catch (error) {
+        res.status(500).json({ success:false, message:error.message , error: "Internal server error"})
+    }
+}
 module.exports = {
-    signup, lipseysLogin, login, demoSignup, demoLogin, sendOtp, varifyOtp, changePassword
+    signup, lipseysLogin, login, demoSignup, demoLogin, sendOtp, varifyOtp, changePassword, getUser, editUser
 }
