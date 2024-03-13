@@ -229,26 +229,26 @@ const sendOtp = async (req, res) => {
 
         const otpCode = generateOTP();
         console.log("otpCode-->", otpCode);
-        let emailTemplate = `<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
-      <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-        <div style="background-color: #3361E1; color: #fff; text-align: center; padding: 10px 0; border-radius: 10px 10px 0 0;">
-          <h1>MONTANA ARMS - OTP Verification</h1>
+      
+        await sendMail(user.email, "OTP Code", ` <div style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+          <div style="background-color: #3361E1; color: #fff; text-align: center; padding: 10px 0; border-radius: 10px 10px 0 0;">
+            <h1>MONTANA ARMS - OTP Verification</h1>
+          </div>
+          <div style="padding: 20px 0;">
+            <p>Dear User,</p>
+            <p>Your One-Time OTP for MONTANA ARMS reset password is:</p>
+            <h2 style="text-align: center; color: #3361E1;">${otpCode}</h2>
+            <p>Please use this OTP to complete your reset password process.</p>
+            <p>If you didn't request this OTP, please ignore this email.</p>
+            <p>Thank you,</p>
+            <p>The MONTANA ARMS Team</p>
+          </div>
+          <div style="text-align: center; padding: 10px 0;">
+            <p>This is an automated email. Please do not reply.</p>
+          </div>
         </div>
-        <div style="padding: 20px 0;">
-          <p>Dear User,</p>
-          <p>Your One-Time OTP for MONTANA ARMS reset password is:</p>
-          <h2 style="text-align: center; color: #3361E1;">${otpCode}</h2>
-          <p>Please use this OTP to complete your reset password process.</p>
-          <p>If you didn't request this OTP, please ignore this email.</p>
-          <p>Thank you,</p>
-          <p>The MONTANA ARMS Team</p>
-        </div>
-        <div style="text-align: center; padding: 10px 0;">
-          <p>This is an automated email. Please do not reply.</p>
-        </div>
-      </div>
-      </body>`
-        await sendMail(user.email, "OTP Code", emailTemplate)
+        </div>`)
 
         user.otp = {
             type: "forgetPassword",
