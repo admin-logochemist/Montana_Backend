@@ -17,7 +17,7 @@ const sendMail = async (userEmail,subject,emailTemplate)=>{
         from: "muhammadumar10293847@gmail.com",
         to: userEmail,
         subject: subject,
-        text: emailTemplate,
+        html: emailTemplate,
       };
       await transporter.sendMail(mailOptions);
       console.log("email send from nodemailer")
