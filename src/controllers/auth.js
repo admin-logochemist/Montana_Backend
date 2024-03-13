@@ -23,14 +23,14 @@ const signup = async (req, res) => {
         // Create a new user
         const newUser = new db.UserModel({ firstName, secondName, email, password: hashedPassword });
         await newUser.save();
-        
+
         // Generate JWT token
         const token = await jwt.sign({ userId: newUser._id }, process.env.SECRET_KEY, {
             expiresIn: '1h',
         });
-        
 
-        
+
+
         return res.status(200).json({
             success: true,
             token,
@@ -148,7 +148,7 @@ const demoSignup = async (req, res) => {
         // Check if the user already exists
         const existingUser = await db.DemoUserModel.findOne({ email });
         if (existingUser) {
-            return res.status(200).json({success:false, message: 'Email already exists' ,  type: "email" });
+            return res.status(200).json({ success: false, message: 'Email already exists', type: "email" });
         }
 
         // Hash the password
@@ -216,109 +216,127 @@ const demoSignup = async (req, res) => {
 // Generate random OTP
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
-  }
-  
+}
+
 const sendOtp = async (req, res) => {
     try {
-      const userEmail = req.body.email;
-      const user = await db.UserModel.findOne({ email: userEmail });
-  
-      if (!user) {
-        return res.status(404).json({success: false, message: "User not registered with this email" });
-      }
-  
-      const otpCode = generateOTP();
-      console.log("otpCode-->", otpCode);
-  
-      await sendMail(user.email, "OTP Code",  `Your OTP code is: ${otpCode}`)
-  
-      user.otp = {
-        type: "forgetPassword",
-        value: otpCode,
-        isVerified: false,
-      };
-  
-      await user.save();
-  
-      res.status(200).json({ success: true, message: "OTP sent successfully" });
-    } catch (error) {
-      console.error("Error sending OTP:", error);
-      res.status(500).json({ success:false, message:error.message , error: "Internal server error" });
-    }
-  };
-  
-  const varifyOtp = async (req,res) => {
-    try {
-      const userEmail = req.body.email;
-      const userOtp = req.body.otp;
-      const user = await db.UserModel.findOne({ email: userEmail });
-      if (!user) {
-        return res.status(404).json({success: false, message: "User not registered with this email" });
-      }
-  
-      if (user.otp.value == userOtp) {
-        user.otp.isVerified = true;
-        await user.save();
-        res.status(200).json({ success: true, message: "OTP verified successfully" });
-      } 
-      else {
-        res.status(400).json({success: false, message: "Invalid OTP" });
-      }
-  
-    } catch (error) {
-      console.log("Error while verifying OTP:", error);
-      res.status(500).json({ success:false, message:error.message , error: "Internal server error"})
-    }
-  }
-  
-  const changePassword = async (req,res) =>{
-    try {
-      const userEmail = req.body.email;
-      const userNewPassword = req.body.password;
-      const user = await db.UserModel.findOne({ email: userEmail });
-      if (!user) {
-        return res.status(404).json({success: false, message: "User not registered with this email" });
-      }
-      const hashedPassword = await bcrypt.hash(userNewPassword, saltRounds);
-      user.password = hashedPassword;
-      await user.save();
-      res.status(200).json({ success: true, message: "Password changed successfully" });
-  
-    } catch (error) {
-      console.log("Error while changing Password:", error);
-      res.status(500).json({ success:false, message:error.message , error: "Internal server error"})
-    }
-  }
+        const userEmail = req.body.email;
+        const user = await db.UserModel.findOne({ email: userEmail });
 
-const lipseysLogin = async (req,res)=>{
-    const {email , password} = req.body;
-    try {    
-        lipseysApi.Init(email,password,function (resp) {
-            console.log(res);
-            res.status(200).json({ success: true, message: "token generated", data : resp });
-          })
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not registered with this email" });
+        }
+
+        const otpCode = generateOTP();
+        console.log("otpCode-->", otpCode);
+        let emailTemplate = `<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+      <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <div style="background-color: #3361E1; color: #fff; text-align: center; padding: 10px 0; border-radius: 10px 10px 0 0;">
+          <h1>MONTANA ARMS - OTP Verification</h1>
+        </div>
+        <div style="padding: 20px 0;">
+          <p>Dear User,</p>
+          <p>Your One-Time OTP for MONTANA ARMS reset password is:</p>
+          <h2 style="text-align: center; color: #3361E1;">${otpCode}</h2>
+          <p>Please use this OTP to complete your reset password process.</p>
+          <p>If you didn't request this OTP, please ignore this email.</p>
+          <p>Thank you,</p>
+          <p>The MONTANA ARMS Team</p>
+        </div>
+        <div style="text-align: center; padding: 10px 0;">
+          <p>This is an automated email. Please do not reply.</p>
+        </div>
+      </div>
+      </body>`
+        await sendMail(user.email, "OTP Code", emailTemplate)
+
+        user.otp = {
+            type: "forgetPassword",
+            value: otpCode,
+            isVerified: false,
+        };
+
+        await user.save();
+
+        res.status(200).json({ success: true, message: "OTP sent successfully" });
     } catch (error) {
-        res.status(500).json({ success:false, message:error.message , error: "Internal server error"})
+        console.error("Error sending OTP:", error);
+        res.status(500).json({ success: false, message: error.message, error: "Internal server error" });
+    }
+};
+
+const varifyOtp = async (req, res) => {
+    try {
+        const userEmail = req.body.email;
+        const userOtp = req.body.otp;
+        const user = await db.UserModel.findOne({ email: userEmail });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not registered with this email" });
+        }
+
+        if (user.otp.value == userOtp) {
+            user.otp.isVerified = true;
+            await user.save();
+            res.status(200).json({ success: true, message: "OTP verified successfully" });
+        }
+        else {
+            res.status(400).json({ success: false, message: "Invalid OTP" });
+        }
+
+    } catch (error) {
+        console.log("Error while verifying OTP:", error);
+        res.status(500).json({ success: false, message: error.message, error: "Internal server error" })
+    }
+}
+
+const changePassword = async (req, res) => {
+    try {
+        const userEmail = req.body.email;
+        const userNewPassword = req.body.password;
+        const user = await db.UserModel.findOne({ email: userEmail });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not registered with this email" });
+        }
+        const hashedPassword = await bcrypt.hash(userNewPassword, saltRounds);
+        user.password = hashedPassword;
+        await user.save();
+        res.status(200).json({ success: true, message: "Password changed successfully" });
+
+    } catch (error) {
+        console.log("Error while changing Password:", error);
+        res.status(500).json({ success: false, message: error.message, error: "Internal server error" })
+    }
+}
+
+const lipseysLogin = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        lipseysApi.Init(email, password, function (resp) {
+            console.log(res);
+            res.status(200).json({ success: true, message: "token generated", data: resp });
+        })
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message, error: "Internal server error" })
     }
 
 }
-const getUser = async (req,res)=>{
+const getUser = async (req, res) => {
     try {
         const id = req.params.id;
 
         const user = await db.UserModel.findById(id);
 
-        if(!user){
-            res.status(404).json({success: false, message:"Not found"})
-        }else{
-            res.status(200).json({success:true, message:"User get successfull", data: user})
+        if (!user) {
+            res.status(404).json({ success: false, message: "Not found" })
+        } else {
+            res.status(200).json({ success: true, message: "User get successfull", data: user })
         }
 
     } catch (error) {
-        res.status(500).json({ success:false, message:error.message , error: "Internal server error"})
+        res.status(500).json({ success: false, message: error.message, error: "Internal server error" })
     }
 }
-const editUser = async (req,res)=>{
+const editUser = async (req, res) => {
     try {
         const userId = req.params.id;
         const updatedUserData = req.body;
@@ -329,9 +347,9 @@ const editUser = async (req,res)=>{
             return res.status(404).json({ message: 'User not found' });
         }
 
-        return res.status(200).json({success:true,message:"Update Successful", data:user});
+        return res.status(200).json({ success: true, message: "Update Successful", data: user });
     } catch (error) {
-        res.status(500).json({ success:false, message:error.message , error: "Internal server error"})
+        res.status(500).json({ success: false, message: error.message, error: "Internal server error" })
     }
 }
 module.exports = {
